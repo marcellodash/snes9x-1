@@ -31,14 +31,14 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-#define OPTION_SIZE 40
-#define OPTION_SPACING 50
-#define OPTION_WIDTH 300
+#define OPTION_SIZE (NATIVE_RES_HEIGHT * 40/480)
+#define OPTION_SPACING (NATIVE_RES_HEIGHT * 50/480)
+#define OPTION_WIDTH (NATIVE_RES_WIDTH  * 300/320)
 
 //Toggle stuff
 #define TOGGLE_TXT_X 10
-#define TOGGLE_ON_X 160
-#define TOGGLE_OFF_X 240
+#define TOGGLE_ON_X OPTION_WIDTH/2
+#define TOGGLE_OFF_X OPTION_WIDTH*3/4
 #define TOGGLE_Y 5
 
 
@@ -430,7 +430,10 @@ static int base_height(size_t options_count)
 
 void initializeMenu()
 {
-  menu_font = TTF_OpenFont( FONT, 18 );
+  if (NATIVE_RES_HEIGHT <= 480)
+    menu_font = TTF_OpenFont( FONT, 18 );
+  else
+    menu_font = TTF_OpenFont( FONT, 24 );
 
   //Static initializers for all this is a PITA, so do it dynamically.
   
@@ -750,7 +753,7 @@ bool showLines( SDL_Surface * s, line * lines, int numlines, bool center )
     //Draw the lines specified...
     SDL_Surface * nr[numlines];
     int offset = 30;//arbitrary offset, centering all this isn't worth it.
-    TTF_Font * font_normal = TTF_OpenFont( FONT, 16 );
+    TTF_Font * font_normal = TTF_OpenFont( FONT, (NATIVE_RES_HEIGHT > 480 ? 32 : 16) );
     for ( int i = 0; i < numlines; ++i )
     {
         nr[i] = TTF_RenderText_Blended( font_normal, lines[i].msg, lines[i].color );
